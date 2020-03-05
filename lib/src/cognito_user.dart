@@ -151,7 +151,7 @@ class CognitoUser {
 
   /// This is used to get a session, either from the session object
   /// or from  the local storage, or by using a refresh token
-  Future<CognitoUserSession> getSession() async {
+  Future<CognitoUserSession> getSession({bool refreshSessionIfExpired}) async {
     if (username == null) {
       throw new Exception('Username is null. Cannot retrieve a new session');
     }
@@ -191,8 +191,11 @@ class CognitoUser {
         throw new Exception(
             'Cannot retrieve a new session. Please authenticate.');
       }
+      if(refreshSessionIfExpired?? true) {
+        return refreshSession(refreshToken);
+      }
 
-      return refreshSession(refreshToken);
+      throw new Exception('Token is expired.');
     }
     throw new Exception(
         'Local storage is missing an ID Token, Please authenticate');
